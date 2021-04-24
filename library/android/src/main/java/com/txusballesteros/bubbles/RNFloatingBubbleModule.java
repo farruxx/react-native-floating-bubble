@@ -1,5 +1,5 @@
 
-package com.reactlibrary;
+package com.txusballesteros.bubbles;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -17,10 +17,6 @@ import android.view.View;
 import android.content.Intent;
 import android.provider.Settings;
 import android.net.Uri;
-
-import com.txusballesteros.bubbles.BubbleLayout;
-import com.txusballesteros.bubbles.BubblesManager;
-import com.txusballesteros.bubbles.OnInitializedCallback;
 
 public class RNFloatingBubbleModule extends ReactContextBaseJavaModule {
 
