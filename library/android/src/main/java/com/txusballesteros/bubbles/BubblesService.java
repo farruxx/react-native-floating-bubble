@@ -44,7 +44,7 @@ import java.util.List;
 
 public class BubblesService extends Service {
     private BubblesServiceBinder binder = new BubblesServiceBinder();
-    private static List<BubbleLayout> bubbles = new ArrayList<>();
+    private List<BubbleLayout> bubbles = new ArrayList<>();
     private BubbleTrashLayout bubblesTrash;
     private WindowManager windowManager;
     private BubblesLayoutCoordinator layoutCoordinator;
@@ -63,16 +63,27 @@ public class BubblesService extends Service {
         return super.onUnbind(intent);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (BubbleLayout bubble : bubbles) {
+            recycleBubble(bubble);
+        }
+        bubbles.clear();
+    }
+
     private void recycleBubble(final BubbleLayout bubble) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 getWindowManager().removeView(bubble);
                 for (BubbleLayout cachedBubble : bubbles) {
-                    cachedBubble.notifyBubbleRemoved();
-                    break;
+                    if (cachedBubble == bubble) {
+                        bubble.notifyBubbleRemoved();
+                        bubbles.remove(cachedBubble);
+                        break;
+                    }
                 }
-                bubbles.clear();
             }
         });
     }
@@ -85,6 +96,11 @@ public class BubblesService extends Service {
     }
 
     public void addBubble(BubbleLayout bubble, int x, int y) {
+        for (BubbleLayout b : bubbles) {
+            recycleBubble(b);
+        }
+        bubbles.clear();
+
         WindowManager.LayoutParams layoutParams = buildLayoutParamsForBubble(x, y);
         bubble.setWindowManager(getWindowManager());
         bubble.setViewParams(layoutParams);
